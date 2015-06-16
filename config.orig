@@ -1,0 +1,23 @@
+from mod_python import apache
+
+def index(req):
+	req.content_type = "text/html"
+	req.send_http_header()
+	req.write("<HTML>")
+	req.write("<HEAD><TITLE>PiIrrigation</TITLE></HEAD>")
+	req.write("<BODY>")	req.write("<FORM NAME=""zone"" ACTION=""zone"">")
+	req.write("<TABLE WIDTH=""60%"">")
+	req.write("<TR>")
+	req.write("<TD>Select Zone</TD>")
+	req.write("<TD><SELECT NAME=""zona"">")
+	req.write("<OPTION VALUE=""1"">Zona 1</OPTION>")
+	req.write("</TD>")
+	req.write("<TR>")
+	req.write("<TD COLSPAN='2' ALIGN='CENTER'>")
+	req.write("<INPUT TYPE='SUBMIT' VALUE='Submit'>")
+	req.write("</TD>")
+	req.write("</TR>")
+	req.write("</TABLE>")
+	req.write("</BODY>")
+	req.write("</HTML>")
+	return ;
