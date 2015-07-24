@@ -1,47 +1,42 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
-
-<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
-
-<head>
-
-<meta name="Description" content="Irrgation System based on RaspberryPI board" />
-<meta name="Keywords" content="your, keywords" />
-<meta http-equiv="Content-Type" content="text/html; charset=iso-8859-1" />
-<meta name="Distribution" content="Global" />
-<meta name="Author" content="Michele Pavan - michele.pavan@gmail.com" />
-<meta name="Robots" content="index,follow" />
-
-<link rel="stylesheet" href="/raspberry/images/PixelGreen.css" type="text/css" />
-
-<title>GardenPi Irrigation</title>
-	
-</head>
-
 <body>
-<!-- wrap starts here -->
-<div id="wrap">
+<!DOCTYPE html>
+<html>
+	<head>
+	<title>GardenPi Irragation</title>
+	<link rel="stylesheet" href="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.css" />
+	<script src="http://code.jquery.com/jquery-1.4.3.min.js"></script>
+	<script src="http://code.jquery.com/mobile/1.0a1/jquery.mobile-1.0a1.min.js"></script>
 
-	<div id="header"><div id="header-content">	
-		
-		<h1 id="logo"><a href="index.py" title="">GardenPI</a></h1>	
-		<h2 id="slogan">Rasberry Pi Irrigation system</h2>		
-		
-		<!-- Menu Tabs -->
-		<ul>
-			<li><a href="/raspberry/index.py" id="current">Monitor</a></li>
-			<li><a href="/raspberry/manual.py">Manual</a></li>
-			<li><a href="/raspberry/config.py">Setup</a></li>
-			<li><a href="/raspberry/stopall.py">Stop All</a></li>
-			<li><a href="/raspberry/about.py">About</a></li>			
-		<BR>
-			<li><a href="/raspberry/rain.py">Rain</a></li>
-			<li><a href="/raspberry/temp.py">Temperature</a></li>
-		</ul>		
+	<!-- jQMDateBox DateTime Picker module-->
+	<link rel="stylesheet" type="text/css" href="http://cdn.jtsage.com/datebox/latest/jqm-datebox.min.css">
+	<script type="text/javascript" src="http://cdn.jtsage.com/datebox/latest/jqm-datebox.core.min.js"></script>
+	<script type="text/javascript" src="http://dev.jtsage.com/cdn/datebox/latest/jqm-datebox.mode.flipbox.min.js"></script>
+
+
+
+</head>
+<body>
+
+<div data-role="page">
+
+	<div data-role="header">
+		<h1>Raspberry Irrigation System</h1>
+	</div>
+	<!-- /header -->
+	<ul data-role="listview" data-inset="true">
+		<li><a href="./index" id="current">Monitor</a></li>
+		<li><a href="./manual">Manual</a></li>
+		<li><a href="./stopall">Stop All</a></li>
+		<li><a href="./rain">Rain Log</a></li>
+		<li><a href="./temp">Temperature</a></li>
+		<li><a href="./config">Setup</a></li>
+		<li><a href="./about">About</a></li>			
+	</ul>		
+
+	<div data-role="content">
+		<p>
+	<!-- /content -->
+
+
 						
 	
-	</div></div>
-	
-	<div class="headerphoto"></div>
-	
-	<!-- content-wrap starts here -->
-	<div id="content-wrap"><div id="content">		

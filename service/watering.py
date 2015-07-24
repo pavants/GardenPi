@@ -11,7 +11,7 @@ from GardenPi import GardenPi
 import RPi.GPIO as GPIO
 
 ###########################################################
-# Watering
+# Watering  Test
 # 2014
 # Check if it's time to open some valves every minute
 ###########################################################

@@ -1,14 +1,14 @@
-from mod_python import apache
+#from mod_python import apache
 import ConfigParser
 import sys
 #import debug
 
 #cfgFileName='/usr/local/share/pi/zones.cfg'
 #cfgFileName='/data/gardenpi/zones.cfg'
-cfgFileName='/var/www/raspberry/zones.cfg'
+cfgFileName='/var/www/cherry/zones.cfg'
 
 def getInclude(part):
-	fileName="/var/www/raspberry/%s.inc" % part
+	fileName="/var/www/cherry/%s.inc" % part
 	fHeader=open(fileName,'r')
 	header = fHeader.read()
 	fHeader.close()
