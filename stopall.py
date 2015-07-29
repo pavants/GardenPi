@@ -15,11 +15,11 @@ def stop( req ):
   if formValues['zoneSelected'] == '99':
     for i in range( zones.count() ):
       zone=zones.getZoneByID(i)
-      #zone.stopZone()
+      zone.stopZone()
     req.write("<H3>All Zones has been closed")
   else: 
     try:
-      zone=zones.getZoneByID(int(formValues['zoneSelected']))
+      zone=zones.getZoneByID(int(formValues['zoneSelected'])-1)
       zone.stopZone()
       req.write("<H3>Zone <U>%s</U> has been closed" % (zone.description))
     except:

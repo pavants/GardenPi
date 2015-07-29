@@ -3,7 +3,6 @@ import threading
 import sys
 import syslog
 import RPi.GPIO as GPIO
-import sqlite3 as lite
 from GardenPi import GardenPi
 
 ###########################################################
@@ -18,15 +17,20 @@ class ZoneThread( threading.Thread ):
   zoneID = 0
   cfg = GardenPi()
   GPIOPin = cfg.valvesPin.split(",")
+  print GPIOPin
 
   logFilePath = cfg.logFilePath
   logFileHTML = cfg.logFileHTML
-  dbName      = cfg.dbName
 
   def __init__(self):
+    print "ZoneThread: initializing+START"
     #Call super constructor
     super(ZoneThread, self).__init__()
     
+    #self.GPIOPin=["12","12","13","15"]
+    #self.GPIOPin=["11","12","13","15"]  #this are the pins of the GPIO
+    #print self.GPIOPin
+    print "ZoneThread: initializing+END" 
     return
   
   def run(self):
@@ -40,9 +44,7 @@ class ZoneThread( threading.Thread ):
     
 
 
-    #load the gpio pin from the parameters 
-    #(-1 to pair array value with zone value, 
-    #    array start from 0 zone start from 1
+    #load the gpio pin from the parameters (-1 to pair array value with zone value, array start from 0 zone start from 1
     boardPin = self.GPIOPin[self.zoneID-1]
 
     if self.duration == 0 or self.zoneID == 0 or self.duration > 100 or self.zoneID > 4 or boardPin == 0:
@@ -67,7 +69,6 @@ class ZoneThread( threading.Thread ):
       mx = []
       #Write event in Logger
       mx = ["start",str(self.zoneID), str(boardPin), time.strftime("%H:%M:%S")]
-      print mx[1]
       self.writeLog(mx)
       
       # Open requested pin on raspy board
@@ -87,7 +88,7 @@ class ZoneThread( threading.Thread ):
         time.sleep(60)
         self.duration -= 1
         
-      
+time.strftime("%H:%M:%S")      
       mx = ["end",str(self.zoneID), str(boardPin), time.strftime("%H:%M:%S")]
       #Write event in Logger
       self.writeLog(mx)
@@ -121,26 +122,16 @@ class ZoneThread( threading.Thread ):
     return
     
   def writeLog(self,msg):
-    event = "1"
     logFile = open(self.logFilePath,"a") #open file in append mode
     logFile.write(msg[0] + " " + msg[1] + " " +msg[2] + " " + msg[3]+ "\n")
     logFile.close()
-
-
-    con = lite.connect(self.dbName)
-    cur = con.cursor()
 
     logFile = open(self.logFileHTML,"a") #open file in append mode
     if msg[0] == "start":
         logFile.write("<TR><TD>"+msg[2]+"</TD><TD>"+msg[3]+"</TD>\n")
     else:
         logFile.write("<TD>"+msg[3]+"</TD></TR>\n")
-        event = "0"
-    cur.execute("INSERT INTO events (event,zone_id) VALUES("+event+","+msg[2]+")")
-    con.commit()
-    con.close()
     logFile.close()
-
 
     return
     

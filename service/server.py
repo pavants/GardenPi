@@ -7,6 +7,7 @@ import time
 import string
 import syslog
 import sys 
+import logging
 
 ###########################################################
 # Class Server
@@ -20,14 +21,14 @@ class GardenServer( Daemon ):
   cfg = GardenPi()
   serverAddress = (cfg.ipaddress,cfg.port)
   authkey    = cfg.authkey
+  waterBudget= cfg.waterBudget
   threadList = []
   daemon  = True 
 
 
   def run( self ):
-    # Cycling reading input from socket
-    syslog.syslog("run")
 
+    # Cycling reading input from socket
     syslog.syslog("Listener GardenServer Started")
     #listener = Listener(self.address, authkey='testPwd')
     listener = Listener(self.serverAddress,authkey = self.authkey)
@@ -59,17 +60,18 @@ class GardenServer( Daemon ):
 
       elif len(msg) > 0:  
         # Splitting message
-        # message format: pin:time
-        zone     = string.split(msg,":")[0]
+        # message format: zoneId:time
+        zoneId   = string.split(msg,":")[0]
         duration = string.split(msg,":")[1]
+        
         
         #create thread for the zone
         threadZone = ZoneThread()
         self.threadList.append(threadZone)
         try:
 			#set parameters in thread Zone
-			threadZone.setParameters(duration,zone,1)
-			syslog.syslog("opening zone %s for %s @%s" % (zone,duration,time.strftime("%Y-%m-%d %H:%M:%S")))
+			threadZone.setParameters(duration,zoneId,1)
+			syslog.syslog("opening zone %s for %s @%s" % (zoneId,duration,time.strftime("%Y-%m-%d %H:%M:%S")))
 			if duration == - 1:
 				threadZone.close()
 			else:
@@ -84,7 +86,7 @@ class GardenServer( Daemon ):
     return threads
 
 if __name__ == "__main__":
-	daemon = GardenServer('/tmp/gardenserver.pid')
+	daemon = GardenServer('/var/tmp/gardenserver.pid')
 	if len(sys.argv) == 2:
 		if 'start' == sys.argv[1]:
 			daemon.start()

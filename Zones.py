@@ -27,8 +27,7 @@ class Zones:
     self.zones=[]
     config=ConfigParser.RawConfigParser()
     config.read(self.cfgFileName)
-    print self.cfgFileName
-    print config.sections()
+
     for section in config.sections():
       zone = Zone()
       zone.zoneid=config.get(section,"zoneid") 

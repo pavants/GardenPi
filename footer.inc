@@ -1,12 +1,12 @@
-	<!-- content-wrap ends here -->		
-	</div></div>
-
-<!-- footer starts here -->	
-<div id="footer"><div id="footer-content">
-<!-- footer ends here -->
-	
-<!-- wrap ends here -->
-</div>
+        </p>
+	    </div>
+		<div data-role="footer">
+		<!-- footer
+		<h4>Page Footer</h4>
+		-->
+	</div><!-- /header -->
+</div><!-- /page -->
 
 </body>
 </html>
+
