@@ -55,9 +55,12 @@ def displayZone(req,nZone):
       if parameters[par]["type"] == "t":
         line="<TR><TD ALIGN=Left>%s</TD><TD><INPUT TYPE=TEXT NAME=\"%s\" SIZE=""%s"" MAXLENGTH=""%s"" VALUE=""%s""></TD></TR>\n" % (parameters[par]["desc"],par[3:],parameters[par]["len"],parameters[par]["len"],value)
       elif parameters[par]["type"] == "n":
-        line="<TR><TD ALIGN=Left>%s</TD><TD><INPUT STYLE=""text-align:right"" TYPE=TEXT NAME=\"%s\" SIZE=""%s"" MAXLENGTH=""%s"" VALUE=""%s""></TD></TR>\n" % (parameters[par]["desc"],par[3:],parameters[par]["len"],parameters[par]["len"],value)
+        line="<TR><TD ALIGN=Left>%s</TD><TD><INPUT STYLE=""text-align:right"" TYPE=number NAME=\"%s\" SIZE=""%s"" MAXLENGTH=""%s"" VALUE=""%s""></TD></TR>\n" % (parameters[par]["desc"],par[3:],parameters[par]["len"],parameters[par]["len"],value)
       elif parameters[par]["type"] == "hhmm":
-        line="<TR><TD ALIGN=Left>%s</TD><TD><INPUT TYPE=TEXT NAME=\"%s\" SIZE=""%s"" MAXLENGTH=""%s"" VALUE=""%s""></TD></TR>\n" % (parameters[par]["desc"],par[3:],parameters[par]["len"],parameters[par]["len"],value)
+        line="<TR><TD ALIGN=Left>%saaa</TD><TD>"
+        #<INPUT TYPE=TEXT NAME=\"%s\" SIZE=""%s"" MAXLENGTH=""%s"" VALUE=""%s""></TD></TR>\n" % (parameters[par]["desc"],par[3:],parameters[par]["len"],parameters[par]["len"],value)
+        line=line+"<input type=\"text\" data-role=\"datebox\" data-options='{\"mode\":\"flipbox\"}'></TD></TR>\n"
+
 
       htmlCode=htmlCode+line
     

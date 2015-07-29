@@ -11,7 +11,7 @@ from GardenPi import GardenPi
 import RPi.GPIO as GPIO
 
 ###########################################################
-# Watering  Test
+# Watering
 # 2014
 # Check if it's time to open some valves every minute
 ###########################################################
@@ -22,6 +22,7 @@ cfg = GardenPi()
 
 sensorPin            = cfg.rainPin
 rainFlagFile         = cfg.rainFlagFile
+waterBudget          = cfg.waterBudget
 isRaining            = False
 noWaterTimeAfterRain = 12 * 60 * 60 # 12 hours in seconds
 
@@ -47,11 +48,11 @@ else:
     syslog.syslog("lastRain "+str(lastRain))
     f.close()
   except:
-    syslog.syslog("norain in last 12 hours let's watering")
+    syslog.syslog("norain in last 12 hours proceed")
     
   #lastRain = 0
   if time.time() - lastRain < noWaterTimeAfterRain: 
-    syslog.syslog( "wait some time for watering, again at: "+str( time.ctime(lastRain+noWaterTimeAfterRain) ) )
+    syslog.syslog( "wait some time. Watering, again at: "+str( time.ctime(lastRain+noWaterTimeAfterRain) ) )
     sys.exit(-1)
 
 serverAddress = (cfg.ipaddress,cfg.port)
@@ -81,15 +82,19 @@ for zone in zones.getZones():
   # Check if this weekday needs irrigation
   if weekday in days:
     
-    # if so check the clock to see if it is the moment to start  
+    # check the clock to see if it is the moment to start  
     syslog.syslog("localtime hh: %i mm: %i - test %i - %i\n" % (time.localtime()[3],time.localtime()[4],hhStart,mmStart))
     if time.localtime()[3] == hhStart and time.localtime()[4] == mmStart:
      
       syslog.syslog("zone start: %s duration: %s\n" % (zone.description,zone.duration))
       syslog.syslog("Count Start %s" % time.strftime("%Y-%m-%d %H:%M:%S"))
+
+      duration = round(int(zone.duration) * waterBudget / 100 )
       
       #Send to server zone and time
       conn = Client(serverAddress,authkey=authKey)
-      conn.send("%s:%s" % (zone.zoneid,zone.duration))
+      conn.send("%s:%s" % (zone.zoneid,str(duration)))
       conn.close()
+      syslog.syslog("post avvio")
+      #zone.startZone(duration)
 

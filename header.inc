@@ -24,13 +24,13 @@
 	</div>
 	<!-- /header -->
 	<ul data-role="listview" data-inset="true">
-		<li><a href="./index" id="current">Monitor</a></li>
-		<li><a href="./manual">Manual</a></li>
-		<li><a href="./stopall">Stop All</a></li>
-		<li><a href="./rain">Rain Log</a></li>
-		<li><a href="./temp">Temperature</a></li>
-		<li><a href="./config">Setup</a></li>
-		<li><a href="./about">About</a></li>			
+		<li><a href="/raspberry/index.py" id="current">Monitor</a></li>
+		<li><a href="/raspberry/manual.py">Manual</a></li>
+		<li><a href="/raspberry/stopall.py">Stop All</a></li>
+		<li><a href="/raspberry/rain.py">Rain Log</a></li>
+		<li><a href="/raspberry/temp.py">Temperature</a></li>
+		<li><a href="/raspberry/config.py">Setup</a></li>
+		<li><a href="/raspberry/about.py">About</a></li>			
 	</ul>		
 
 	<div data-role="content">
