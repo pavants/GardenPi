@@ -73,12 +73,27 @@ class ZoneThread( threading.Thread ):
       # Open requested pin on raspy board
       # setting GPIO mode
       GPIO.setmode(GPIO.BOARD)  
+      #Disable warning if already open
+      GPIO.setwarnings(False)
       # setting out  
       GPIO.setup(int(boardPin), GPIO.OUT)
 
       # turning on voltage
       GPIO.output(int(boardPin), GPIO.HIGH)
 
+      ##### Update database
+      con = lite.connect(self.dbName)
+      cur = con.cursor()      
+      #insert start event
+      cur.execute("INSERT INTO events (event,zone_id) VALUES('start',"+str(self.zoneID)+")")
+      cur.execute("SELECT last_insert_rowid()")
+      row=cur.fetchone()
+      con.commit()
+      
+	
+      #get row id
+      transactionID=row[0]
+      print transactionID
       
       # Sleeping for the time requested 
       #time.sleep(self.duration*60)
@@ -87,7 +102,14 @@ class ZoneThread( threading.Thread ):
         time.sleep(60)
         self.duration -= 1
         
-      
+
+      #Write stop event
+      print "Transaction ID="+str(transactionID)
+      cur = con.cursor()      
+      cur.execute("UPDATE events SET stop_time=datetime('now','localtime')  WHERE row_id="+str(transactionID))
+      con.commit()
+      con.close()
+
       mx = ["end",str(self.zoneID), str(boardPin), time.strftime("%H:%M:%S")]
       #Write event in Logger
       self.writeLog(mx)
@@ -122,13 +144,10 @@ class ZoneThread( threading.Thread ):
     
   def writeLog(self,msg):
     event = "1"
+
     logFile = open(self.logFilePath,"a") #open file in append mode
     logFile.write(msg[0] + " " + msg[1] + " " +msg[2] + " " + msg[3]+ "\n")
     logFile.close()
-
-
-    con = lite.connect(self.dbName)
-    cur = con.cursor()
 
     logFile = open(self.logFileHTML,"a") #open file in append mode
     if msg[0] == "start":
@@ -136,9 +155,6 @@ class ZoneThread( threading.Thread ):
     else:
         logFile.write("<TD>"+msg[3]+"</TD></TR>\n")
         event = "0"
-    cur.execute("INSERT INTO events (event,zone_id) VALUES("+event+","+msg[2]+")")
-    con.commit()
-    con.close()
     logFile.close()
 
 

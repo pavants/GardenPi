@@ -40,6 +40,7 @@ class Zone:
     self.htmlParameters.update({'03_imagearea':{'desc':'Image area for this zone.<BR> Point top left xy and Point bottom right xy (x,y,x,y)','type':'t','len':'15'}})
     return 
 
+	
   def __getattr__(self, attribute):
     return "You asked for %s, but I'm giving you default" % attribute
 
@@ -55,6 +56,8 @@ class Zone:
     # start zone sending to Server thread zone id and duration 
     rValue = ""
     try:
+      print self.zoneid
+      print self.duration
       conn = Client(self.serverAddress,authkey=self.authKey)
       conn.send("%s:%s" % (self.zoneid,duration))
       conn.close()

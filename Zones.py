@@ -1,5 +1,6 @@
 from Zone import Zone
 import ConfigParser
+import time
 from multiprocessing.connection import Client
 from GardenPi import GardenPi
 
@@ -34,7 +35,6 @@ class Zones:
       zone.name=config.get(section,"name")
       zone.description=config.get(section,"description")
       zone.imagearea=config.get(section,"imagearea")
-      zone.imagearea=config.get(section,"imagearea")
       zone.days=config.get(section,"days")
       zone.start=config.get(section,"start")
       zone.duration=config.get(section,"duration")
@@ -61,6 +61,16 @@ class Zones:
       
     return
 	
+  # Start multiple zones, duration has to be float, zones should be a list
+  def startMultiple(self,duration,zones):
+    returnZone=[]
+    for item in zones:
+       zone = self.zones[int(item)-1]
+       result = zone.startZone(duration)
+       time.sleep(duration*60)
+    return returnZone  
+
+  # Return a list of zones description
   def getAllValuesByName(self,field):
     returnZone=[]
     for zone in self.zones:

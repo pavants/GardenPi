@@ -16,6 +16,7 @@ class GardenPi:
   thermoPin   = 0
   rainPin     = 0
   waterBudget = 0
+  wateringPace= 0
   authkey     = ""
   zoneCfgFile = ""
   logFilePath = ""
@@ -37,6 +38,7 @@ class GardenPi:
     self.valvesPin      = config.get(section,"valvesPin") 
     self.rainFlagFile   = config.get(section,"rainFlagFile")   
     self.waterBudget    = config.getint(section,"waterBudget")   
+    self.wateringPace   = config.getint(section,"wateringPace")   
     self.thermoPin      = config.getint(section,"thermoPin") 
     self.rainPin        = config.getint(section,"rainPin") 
     self.port           = config.getint(section,"port") 

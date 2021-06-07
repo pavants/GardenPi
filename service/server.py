@@ -72,7 +72,7 @@ class GardenServer( Daemon ):
 			#set parameters in thread Zone
 			threadZone.setParameters(duration,zoneId,1)
 			syslog.syslog("opening zone %s for %s @%s" % (zoneId,duration,time.strftime("%Y-%m-%d %H:%M:%S")))
-			if duration == - 1:
+			if duration == -1:
 				threadZone.close()
 			else:
 				threadZone.start()
@@ -86,7 +86,7 @@ class GardenServer( Daemon ):
     return threads
 
 if __name__ == "__main__":
-	daemon = GardenServer('/var/tmp/gardenserver.pid')
+	daemon = GardenServer('/tmp/gardenserver.pid')
 	if len(sys.argv) == 2:
 		if 'start' == sys.argv[1]:
 			daemon.start()

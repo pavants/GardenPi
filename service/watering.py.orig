@@ -2,97 +2,58 @@ import sys
 sys.path.append('/var/www/raspberry')
 
 import time
-import calendar
 import syslog
 import string
-import sqlite3 as lite
 from multiprocessing.connection import Client
 from Zones import Zones
 from Zone  import Zone 
 from GardenPi import GardenPi
 import RPi.GPIO as GPIO
 
-
-
-
-def gotRain(rainSensorPin):
-  #SetGPIO pin mode
-  GPIO.setmode(GPIO.BOARD)
-
-  #Read Sensor
-  GPIO.setup(rainSensorPin,GPIO.IN)
-  
-  isRaining = GPIO.input(rainSensorPin)
-  print (isRaining == 1)
- 
-  return (isRaining == 1) # if 0 not raining, 1 = is raining
-
-
-
 ###########################################################
 # Watering
 # 2014
 # Check if it's time to open some valves every minute
 ###########################################################
-syslog.syslog( "watering check running " )
+
+syslog.syslog( "garden daemon running " )
 
 cfg = GardenPi()
 
-rainSensorPin        = cfg.rainPin
+sensorPin            = cfg.rainPin
 rainFlagFile         = cfg.rainFlagFile
 waterBudget          = cfg.waterBudget
 isRaining            = False
-#noWaterTimeAfterRain = cfg.wateringPace * 60 * 60
-noWaterTimeAfterRain = 0
-#12 * 60 * 60 # 12 hours in seconds
-dbName               = cfg.dbName
+noWaterTimeAfterRain = 12 * 60 * 60 # 12 hours in seconds
 
-isRaining = gotRain(rainSensorPin)
+
+#SetGPIO ping mode
+GPIO.setmode(GPIO.BOARD)
+
+#SetGPIO ping mode
+GPIO.setup(sensorPin,GPIO.IN)
+isRaining = not GPIO.input(sensorPin)
 
 # If it is raining exit
-if isRaining == True:
+if not isRaining:
   print "it's raining"
   sys.exit(-1)
 else:
-
-  #read db to see laast rain time
-  conn = lite.connect(cfg.dbName)
-  cur = conn.execute("SELECT MAX(rain_time) FROM rain")     
-  data = cur.fetchone()
-  conn.close()
-  print data[0]
-  lastRainTuple = time.strptime(data[0],"%Y-%m-%d %H:%M:%S")
-  lastRain = calendar.timegm(lastRainTuple)
-
-  #check how many hours past from last rain
+  syslog.syslog("check rain")
+  #check if it was rain in the last X ours
+  lastRain = 0
+  try:
+    f = open(rainFlagFile,"r")
+    lastRain = float(f.read())
+    syslog.syslog("lastRain "+str(lastRain))
+    f.close()
+  except:
+    syslog.syslog("norain in last 12 hours proceed")
+    
+  #lastRain = 0
   if time.time() - lastRain < noWaterTimeAfterRain: 
-    #syslog.syslog( "wait some time. Watering, again at: "+str( time.ctime(lastRain+noWaterTimeAfterRain) ) )
-    #Temporary Disable rain check, sensor is broken
-    #sys.exit(-1)
-    x=1
-  syslog.syslog("no rain try irrigation")
-
-
-######################################
-#  chek if it's a day off watering
-######################################
-#print "Pre test day off"
-sqlCmd="SELECT * FROM dayoff WHERE when_stop = '"+time.strftime("%Y%m%d")+"' ;"
-#syslog.syslog(sqlCmd)
-
-#print sqlCmd
-
-conn = lite.connect(cfg.dbName)
-cur = conn.cursor()
-cur.execute(sqlCmd)
-row = cur.fetchone()
-conn.close()
-if  row is not None:
-    syslog.syslog("this is a day off raining, exiting")
+    syslog.syslog( "wait some time. Watering, again at: "+str( time.ctime(lastRain+noWaterTimeAfterRain) ) )
     sys.exit(-1)
-
-
-
 
 serverAddress = (cfg.ipaddress,cfg.port)
 authKey=cfg.authkey
@@ -111,10 +72,10 @@ for zone in zones.getZones():
   days     = zone.days
   startTime= zone.start
   duration = float(zone.duration) 
-  TIMESEP  = "."
+  timeSeparator = startTime[2]
      
-  hhStart  = int(startTime.split(TIMESEP)[0])
-  mmStart  = int(startTime.split(TIMESEP)[1])
+  hhStart  = int(startTime.split(timeSeparator)[0])
+  mmStart  = int(startTime.split(timeSeparator)[1])
 
   syslog.syslog("zone %s check day %s, weekday %s, startTime %s, duration %s, hh %s, mm %s" % (zone.zoneid,days, weekday, startTime, duration, hhStart, mmStart))
 
@@ -136,5 +97,4 @@ for zone in zones.getZones():
       conn.close()
       syslog.syslog("post avvio")
       #zone.startZone(duration)
-#return
 

@@ -1,4 +1,4 @@
-from mod_python import apache
+#from mod_python import apache
 import ConfigParser
 import sys
 #import debug

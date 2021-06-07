@@ -1,0 +1,48 @@
+#####
+#####
+from mod_python import apache
+import utility
+import cgi
+import datetime
+import sqlite3 as lite
+from test.test_support import temp_cwd
+
+def index(req):
+
+
+  conn = lite.connect("/data/gardenpi.db") 
+  cur = conn.cursor()
+  cur.execute("SELECT detection_time,temperature,humidity FROM TEMPERATURE WHERE detection_time >= date('now','-25 days') ORDER BY 1 DESC")
+  
+  try:
+
+
+
+    rows = cur.fetchall()
+
+    req.content_type = "text/html;charset=utf-8"
+    req.send_http_header()
+    req.write(utility.getInclude("header"))
+    brokeTime = "0000-00-00"
+    tMin = 99
+    tMax = 0
+
+    for row in rows: 
+      if brokeTime != str(row[0])[0:10]:
+        brokeTime = str(row[0])[0:10]
+        req.write("<BR><B>"+brokeTime+"&nbsp;&nbsp;</B>") 
+        if row[1] > tMax: 
+          tMax= row[1]
+        if row[1] < tMin: 
+          tMin= row[1]
+      req.write("<IMG SRC='images/bar.png' TITLE='"+str(int(row[1]))+" - "+str(row[0])[11:]+" &#8451;' WIDTH='12'  HEIGHT='"+str(150*row[1]/100)+"' ALT='"+str(row[1])+"'>")
+  except:
+     req.write("Unexpected error:", sys.exc_info()[0])
+     #req.write("<TR><TD COLSPAN=4 ALIGN=CENTER>no temperature log available</TD></TR>")
+     raise
+    
+  req.write("</TABLE>\n")
+  req.write("</P>\n")
+
+  req.write(utility.getInclude("footer"))
+  return ;

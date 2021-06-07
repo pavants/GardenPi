@@ -10,23 +10,24 @@ def startZone(req):
   req.content_type = "text/html"
   req.send_http_header()
   req.write(utility.getInclude("header"))
+  duration=float(data["minutes"])
 
   zones=Zones()
   zones.loadValues()
+  #req.write(str(duration)+"<BR>")
+  openZones=[]
+  for item in data:
+    if item.find("chk-") > -1:
+      req.write(item+"<BR>")
+      openZones.append(item[item.find("-")+1:])
 
-  zone=zones.getZoneByID(int(data['zoneSelected'])-1)
-  
-  req.write(zone.getValue('description'))
-  req.write("<P>")
-  #send to server the request to open a zone
-  result=zone.startZone(data['minutes'])
-
-  if ( result == "open"):
-    req.write("<H3>Starting Zone: %s for %s minutes \n" % (data['zoneSelected'],data['minutes']))
-    req.write("</H3>")
+  if len(openZones) > 1:
+    zones.startMultiple(duration,openZones)
+    req.write("<H3>Task Running, opening zones for %i minutes \n" % (duration))
   else:
-    req.write("<H3>Error: %s Opening Zone: %s \n" % (result,data['zoneSelected']))
-    req.write("</H3>")
+    zone = zones.getZoneByID(int(openZones[0])-1)
+    zone.startZone(duration)
+    req.write("<H3>Task Running, opening zones for %i minutes \n" % (duration))
     
   req.write("</P>\n")
   req.write(utility.getInclude("footer"))
@@ -49,13 +50,20 @@ def index(req):
   
   
   req.write("<FORM NAME=""zone"" ACTION=""manual/startZone"">\n")
-  req.write("Select Zone: <SELECT NAME=\"zoneSelected\">\n ")
+  req.write("<fieldset data-role=\"controlgroup\">\n ")
+  req.write("<legend>Select Zone: </legend>\n ")
+  #req.write("Select Zone: <SELECT NAME=\"zoneSelected\">\n ")
   for zone in zones.getZones():
-  	req.write("""<OPTION VALUE="%s">%s\n""" % (zone.zoneid,zone.description))
-  req.write("""\n\n""")
+        zoneId          =zone.zoneid
+        zoneDescription =zone.description
+  	req.write("<input name=chk-%s id=chk-%s TYPE=checkbox data-mini=true>\n" % (zoneId,zoneId))
+	req.write("<label for=\"chk-"+zoneId+"\">"+zoneDescription+"</label>\n")
+  req.write("</FIELDSET>\n ")
+  
+  req.write("\n\n")
   req.write("</SELECT>\n")
   req.write("<label for=\"duration\">Minutes:&nbsp&nbsp</label>")
-  req.write("<input type=\"range\" name=\"minutes\" id=\"minutes\" value=\"10\" min=\"1\" max=\"30\" data-show-value=\"true\">\n<BR>\n")
+  req.write("<input type=\"range\" name=\"minutes\" id=\"minutes\" value=\"5\" min=\"2\" max=\"20\" data-show-value=\"true\">\n<BR>\n")
   req.write("<INPUT TYPE=\"SUBMIT\" data-inline=\"true\" NAME=\"start\" VALUE=\"Start\">\n")
   req.write("</FORM>\n")
   	

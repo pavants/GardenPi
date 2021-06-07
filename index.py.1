@@ -26,13 +26,15 @@ def index(req):
   req.write("<TD><B>Stop</B></TD>\n")
   req.write("</TR></THEAD>\n")
  
-  sqlCmd="SELECT e1.zone_id,strftime('%H:%M',e1.event_time),strftime('%H:%M',e1.stop_time),strftime('%Y%m%d',e1.event_time) "
-  sqlCmd=sqlCmd+" FROM events e1 "
+  sqlCmd="SELECT e1.zone_id,strftime('%H:%M',e1.event_time),strftime('%H:%M',e2.event_time),strftime('%Y%m%d',e1.event_time) "
+  sqlCmd=sqlCmd+" FROM events e1, events e2 "
   sqlCmd=sqlCmd+"WHERE e1.event_time >= datetime('now','-5 days') "
+  sqlCmd=sqlCmd+"  AND e1.event = 1 AND e2.event = 0 "
+  sqlCmd=sqlCmd+"  AND e2.event_time between e1.event_time AND datetime(e1.event_time,'+30 minutes') "
   sqlCmd=sqlCmd+"ORDER BY e1.event_time DESC"
 
 
-  conn = lite.connect("/data/gardenpi/gardenpi.db")
+  conn = lite.connect("/data/gardenpi.db")
   cur = conn.cursor()
   cur.execute(sqlCmd)
 
@@ -47,7 +49,7 @@ def index(req):
     for row in rows:
         if breakDate != row[3]:
           req.write("<TR>")
-          req.write("<TD COLSPAN=3>"+row[3][6:8]+"/"+row[3][4:6]+"/"+row[3][0:4])
+          req.write("<TD COLSPAN=3>"+row[3])
           req.write("</TD>")
           req.write("</TR>")
           breakDate = row[3]
