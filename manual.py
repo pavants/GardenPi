@@ -63,7 +63,7 @@ def index(req):
   req.write("\n\n")
   req.write("</SELECT>\n")
   req.write("<label for=\"duration\">Minutes:&nbsp&nbsp</label>")
-  req.write("<input type=\"range\" name=\"minutes\" id=\"minutes\" value=\"5\" min=\"2\" max=\"20\" data-show-value=\"true\">\n<BR>\n")
+  req.write("<input type=\"range\" name=\"minutes\" id=\"minutes\" value=\"5\" min=\"3\" max=\"8\" data-show-value=\"true\">\n<BR>\n")
   req.write("<INPUT TYPE=\"SUBMIT\" data-inline=\"true\" NAME=\"start\" VALUE=\"Start\">\n")
   req.write("</FORM>\n")
   	

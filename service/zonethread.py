@@ -67,18 +67,20 @@ class ZoneThread( threading.Thread ):
       mx = []
       #Write event in Logger
       mx = ["start",str(self.zoneID), str(boardPin), time.strftime("%H:%M:%S")]
-      print mx[1]
+      print(mx[1])
       self.writeLog(mx)
       
       # Open requested pin on raspy board
       # setting GPIO mode
-      GPIO.setmode(GPIO.BOARD)  
+      #GPIO.setmode(GPIO.BOARD)  
+      GPIO.setmode(GPIO.BCM)  
       #Disable warning if already open
       GPIO.setwarnings(False)
       # setting out  
       GPIO.setup(int(boardPin), GPIO.OUT)
 
       # turning on voltage
+      print("opening "+boardPin)
       GPIO.output(int(boardPin), GPIO.HIGH)
 
       ##### Update database
@@ -99,12 +101,13 @@ class ZoneThread( threading.Thread ):
       #time.sleep(self.duration*60)
       while self.duration > 0:
         # Sleeps for 1 minute 
+	print(self.duration)
         time.sleep(60)
         self.duration -= 1
         
 
       #Write stop event
-      print "Transaction ID="+str(transactionID)
+      print("Transaction ID="+str(transactionID))
       cur = con.cursor()      
       cur.execute("UPDATE events SET stop_time=datetime('now','localtime')  WHERE row_id="+str(transactionID))
       con.commit()
